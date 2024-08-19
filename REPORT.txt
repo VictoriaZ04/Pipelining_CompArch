@@ -1,0 +1,58 @@
+(1) Discuss the hazards you had to deal with. For each:
+
+ - What type of hazard was it?
+
+ - Show an instruction sequence that exposes it
+
+ - What solutions did you consider?
+
+ - Which one did you pick? Why?
+
+ (1a) Data hazard
+        A data hazard was when some data that was being used was modified
+        in a previous instruction that had not finished executing yet. this
+        becomes a problem because, if not handled, will result in incorrect 
+        operations being executed. 
+        Ex.
+            sub r1, r2, r3    --    regs[1] = regs[2] - regs[3]
+            sub r0, r1, r2    --    regs[0] = regs[1] - regs[2]
+        There were two main possible solutions I considered which was either
+        flushing the pipeline and rerunning the second instruction or to
+        forward the modified value to the previous stage for the second
+        instruction to use.
+
+        I ended up choosing to forward the values instead of flushing 
+        it was more efficient for the pipeline and results in a lower CPI.
+ (1b) Control hazard
+        A control hazard is when the pipeline runs the wrong instrustions.
+        Ex.
+            jz r1, r0                   // jumps past next instruction
+            [other instructions]
+            [instruction at regs[0]]
+        There was really only one solution that I considered which was 
+        flushing the pipeline which is what I ended up doing. I decided
+        to flush because it was pretty much the only way to ensure that the
+        pipeline didn't run instructions it wasn't supposed to.
+ (1c) Resource hazard
+        A resource hazard is when the pipeline doesn't have enough resources
+        to execute an instruction. This means the pipeline is limited in 
+        some way such as having only 2 read ports on memory and the register 
+        file.
+        Ex.
+            st r1, r2 // where r2 (the memory address) is not 16-byte aligned
+            [other instructions]
+        Two of the main solutions that I considered were stalling the pipeline
+        and flushing the pipeline.
+
+        I ended up deciding to stall the pipeline because it reduced the number
+        of cylces lost in completing this instruction which made it more 
+        efficient.
+
+
+(2) Can your implementation handle misaligned memory references? Explain
+    My implementation can handle misaligned PC references but not misaligned
+    memory load and store. For misaligned PC I solve the hazard by storing the 
+    previously read value from memory. Then in decode, if the pc is misaligned,
+    I concatenate the currently ready and previously read value from memory
+    to create the instruction. To implement misaligned load and store I would 
+    stall the pipeline several stages to make multiple memory calls.

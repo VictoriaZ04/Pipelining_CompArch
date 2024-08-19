@@ -1,0 +1,74 @@
+@0
+// Basic testing with no hazards
+
+// test 0 : Testing movl test 0
+8300	// print 0
+80a0	// print \n
+
+// test 1 : Testing sub
+8321	
+8012	
+0120	// print 1
+80a0	// print \n                            // mem 10
+
+// test 2 : Testing movh
+8321	
+9011	
+8002	
+9012	
+0120	// print 2                           // mem 20
+80a0	// print \n
+
+// test 3 : Testing st -- self modifies code -- no hazard
+// writes the instruction 8330 -- movl r0, #64
+8401	// Setting write address
+8302	// writing instruction pt1
+9832	// writing instruction pt2
+
+800a	// buffer                              // mem 30
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer                              // mem 40
+800a	// buffer
+800a	// buffer
+
+f112	// rewriting the instruction
+
+800a	// buffer
+800a	// buffer                              // mem 50
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer                              // mem 60
+800a	// buffer
+ffff
+80a0	// print \n
+
+// test 4 : Testing ld
+8961	// Setting write address
+8342	// writing instruction pt1             // mem 70
+
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer                               // mem 80
+800a	// buffer
+800a	// buffer
+800a	// buffer
+
+f112	// rewriting the instruction
+
+800a	// buffer                               // mem 90
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer
+800a	// buffer                               // mem 100
+800a	// buffer
+800a	// buffer
+f100	// print 4
+ffff
